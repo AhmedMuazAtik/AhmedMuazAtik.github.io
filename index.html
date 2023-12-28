@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
   <style>
     body {
-      font-family: 'Roboto', Arial, sans-serif;
+      font-family: 'Lato', Arial, sans-serif;
       margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
       overflow: hidden;
-      background: linear-gradient(45deg, #4caf50, #2196f3);
+      background: linear-gradient(45deg, #3498db, #2c3e50);
       animation: gradientAnimation 8s infinite alternate;
     }
-
+    
     @keyframes gradientAnimation {
       0% {
         background-position: 0% 0%;
@@ -26,67 +26,59 @@
         background-position: 100% 100%;
       }
     }
-
-    #taskContainer {
+    
+    #taskContainer, #historyContainer {
       width: 90%;
       max-width: 400px;
       background-color: #fff;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
       border-radius: 8px;
       overflow: hidden;
       opacity: 0;
-      animation: fadeIn 0.6s ease-out forwards;
+      animation: fadeIn 0.6s ease-out forwards, slideIn 0.6s ease-out 0.3s forwards;
       margin: 20px;
       padding: 20px;
     }
-
+    
     @keyframes fadeIn {
       to {
         opacity: 1;
       }
     }
-
+    
+    @keyframes slideIn {
+      to {
+        transform: translateY(0);
+      }
+    }
+    
     h1 {
-      background-color: #4caf50;
+      background-color: #3498db;
       color: #fff;
       margin: 0;
       padding: 20px;
       font-size: 24px;
       text-align: center;
+      border-bottom: 1px solid #2980b9;
     }
-
-    input[type="text"] {
+    
+    input[type="text"], .date-input {
       width: calc(100% - 20px);
       padding: 10px;
       margin: 10px;
-      border: none;
-      border-bottom: 1px solid #ddd;
+      border: 1px solid #ddd;
+      border-radius: 4px;
       outline: none;
       font-size: 16px;
       box-sizing: border-box;
-      transition: border-bottom-color 0.3s;
+      transition: border-color 0.3s;
     }
-
-    input[type="text"]:focus {
-      border-bottom-color: #4caf50;
+    
+    input[type="text"]:focus, .date-input:focus {
+      border-color: #3498db;
     }
-
-    .date-input {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 10px;
-      border: none;
-      border-bottom: 1px solid #ddd;
-      outline: none;
-      font-size: 16px;
-      box-sizing: border-box;
-      transition: border-bottom-color 0.3s;
-    }
-
-    .date-input:focus {
-      border-bottom-color: #4caf50;
-    }
-
+    
     button {
       width: 48%;
       padding: 10px;
@@ -94,32 +86,36 @@
       color: #fff;
       cursor: pointer;
       font-size: 16px;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.2s ease-in-out;
       margin-top: 10px;
+      border-radius: 4px;
+      display: inline-block;
     }
-
+    
     button.addBtn {
-      background-color: #4caf50;
+      background-color: #3498db;
     }
-
+    
     button.addBtn:hover {
-      background-color: #45a049;
+      background-color: #2980b9;
+      transform: scale(1.05);
     }
-
+    
     button.clearBtn {
-      background-color: #f44336;
+      background-color: #e74c3c;
     }
-
+    
     button.clearBtn:hover {
-      background-color: #d32f2f;
+      background-color: #c0392b;
+      transform: scale(1.05);
     }
-
+    
     ul {
       list-style-type: none;
       padding: 0;
       margin: 0;
     }
-
+    
     li {
       padding: 15px;
       border-bottom: 1px solid #ddd;
@@ -130,6 +126,13 @@
       transform: translateY(20px);
       animation: fadeInTask 0.5s ease-out forwards;
     }
+    
+    @keyframes fadeInTask {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     li.completed {
       background-color: #e0f7fa;
@@ -137,9 +140,30 @@
       text-decoration: line-through;
     }
 
-    li.timeout {
+    @keyframes scoreOutAnimation {
+      0% {
+        transform: scaleX(1);
+      }
+      100% {
+        transform: scaleX(0);
+      }
+    }
+    
+    @keyframes fadeInHistoryRow {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    li.timedOut {
       background-color: #ffcdd2;
       color: #d32f2f;
+      text-decoration: line-through;
     }
 
     @keyframes fadeInTask {
@@ -212,11 +236,41 @@
       padding: 20px;
       color: #757575;
     }
+
+    button.clearHistoryBtn:hover {
+      background-color: #acacac;
+      transform: scale(1.05);
+    }
+
+    .copyright {
+      text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: #fff;
+  padding: 0;
+  font-size: 12px;
+    }
+
+    /* Media Query for iPhone 11 and similar devices */
+    @media only screen and (max-width: 414px) {
+      .container {
+        width: 100%;
+        max-width: none;
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+      #historyContainer {
+        margin-top: 20px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div id="taskContainer">
+  <div class="container" id="taskContainer">
+    
     <h1>To-Do List</h1>
 
     <div>
@@ -230,12 +284,15 @@
   </div>
 
   <!-- Add this button in the historyContainer -->
-<div id="historyContainer">
+  <div class="container" id="historyContainer">
   <button class="historyBtn" onclick="showHistory()">Show Task History</button>
   <button class="clearHistoryBtn" onclick="clearHistory()">Clear History</button>
   <table id="historyTable"></table>
 </div>
 
+<div class="copyright">
+  <p>All rights reserved to Ahmed Muaz Atik</p>
+</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js"></script>
   <script src="app.js"></script>
