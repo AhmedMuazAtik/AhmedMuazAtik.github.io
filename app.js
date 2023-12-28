@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     saveHistory();
   }
 
- // Function to add a new task
+// Function to add a new task
 window.addTask = function () {
   const taskText = taskInput.value.trim();
   const dueDate = taskDate.value;
@@ -87,6 +87,15 @@ window.addTask = function () {
 
   // Check if due date is set
   if (dueDate) {
+    // Check if the due date is in the future
+    const currentDate = new Date();
+    const selectedDate = new Date(dueDate);
+
+    if (selectedDate <= currentDate) {
+      alert("Please select a future date for the task.");
+      return;
+    }
+
     const newTask = {
       text: taskText,
       completed: false,
@@ -94,10 +103,10 @@ window.addTask = function () {
     };
 
     // Convert due date to milliseconds
-    const dueTime = new Date(dueDate).getTime();
+    const dueTime = selectedDate.getTime();
 
     // Calculate time remaining
-    const currentTime = new Date().getTime();
+    const currentTime = currentDate.getTime();
     const timeRemaining = dueTime - currentTime;
 
     // Schedule an alert when the time is up
