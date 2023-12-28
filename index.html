@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(45deg, #4caf50, #2196f3);
+      animation: gradientAnimation 8s infinite alternate;
+    }
+
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 0%;
+      }
+      100% {
+        background-position: 100% 100%;
+      }
+    }
+
+    #taskContainer {
+      width: 90%;
+      max-width: 400px;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out forwards;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    h1 {
+      background-color: #4caf50;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-bottom: 1px solid #ddd;
+      outline: none;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-bottom-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #4caf50;
+    }
+
+    .date-input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px;
+      border: none;
+      border-bottom: 1px solid #ddd;
+      outline: none;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-bottom-color 0.3s;
+    }
+
+    .date-input:focus {
+      border-bottom-color: #4caf50;
+    }
+
+    button {
+      width: 48%;
+      padding: 10px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    button.addBtn {
+      background-color: #4caf50;
+    }
+
+    button.addBtn:hover {
+      background-color: #45a049;
+    }
+
+    button.clearBtn {
+      background-color: #f44336;
+    }
+
+    button.clearBtn:hover {
+      background-color: #d32f2f;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInTask 0.5s ease-out forwards;
+    }
+
+    li.completed {
+      background-color: #e0f7fa;
+      color: #757575;
+      text-decoration: line-through;
+    }
+
+    li.timeout {
+      background-color: #ffcdd2;
+      color: #d32f2f;
+    }
+
+    @keyframes fadeInTask {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .icons {
+      font-size: 18px;
+      margin-left: 10px;
+      cursor: pointer;
+      color: #757575;
+      transition: color 0.3s;
+    }
+
+    .icons:hover {
+      color: #4caf50;
+    }
+
+    #historyContainer {
+      width: 90%;
+      max-width: 400px;
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out forwards;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    button.historyBtn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #333;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    button.historyBtn:hover {
+      background-color: #555;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: #fff;
+    }
+
+    .empty-history {
+      text-align: center;
+      padding: 20px;
+      color: #757575;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="taskContainer">
+    <h1>To-Do List</h1>
+
+    <div>
+      <input type="text" id="taskInput" placeholder="Add a new task">
+      <input type="datetime-local" class="date-input" id="taskDate" placeholder="Set due date and time">
+      <button class="addBtn" onclick="addTask()">Add Task</button>
+      <button class="clearBtn" onclick="clearAll()">Clear All</button>
+    </div>
+
+    <ul id="taskList"></ul>
+  </div>
+
+  <!-- Add this button in the historyContainer -->
+<div id="historyContainer">
+  <button class="historyBtn" onclick="showHistory()">Show Task History</button>
+  <button class="clearHistoryBtn" onclick="clearHistory()">Clear History</button>
+  <table id="historyTable"></table>
+</div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
