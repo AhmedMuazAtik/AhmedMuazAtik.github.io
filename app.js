@@ -12,6 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
   renderTasks();
   renderHistory();
 
+  // Function to show task history
+  window.showHistory = function () {
+  // Your implementation to show task history
+  // For example, you can toggle the visibility of the history container
+  const historyContainer = document.getElementById("historyContainer");
+  historyContainer.style.display = "block"; // Adjust this based on your styling logic
+  };
+
   // Function to clear all tasks
   window.clearAll = function () {
     // Clear the tasks array
@@ -28,35 +36,40 @@ document.addEventListener("DOMContentLoaded", function () {
     renderHistory();
   };
 
-  // Function to render tasks
-  function renderTasks() {
-    taskList.innerHTML = "";
-    tasks.forEach(function (task, index) {
-      const listItem = document.createElement("li");
-      listItem.textContent = `${task.text} - Due: ${task.dueDate || 'No due date'}`;
-      listItem.className = task.completed ? "completed" : (task.timeout ? "timeout" : "");
+// Function to render tasks
+function renderTasks() {
+  taskList.innerHTML = "";
+  tasks.forEach(function (task, index) {
+    const listItem = document.createElement("li");
 
-      // Add buttons for marking as complete and deleting
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.onclick = function () {
-        deleteTask(index);
-      };
+    if (!task) {
+      return; // Skip rendering if the task is null
+    }
 
-      const completeButton = document.createElement("button");
-      completeButton.textContent = task.completed ? "Undo" : "Complete";
-      completeButton.onclick = function () {
-        toggleComplete(index);
-      };
+    listItem.textContent = `${task.text} - Due: ${task.dueDate || 'No due date'}`;
+    listItem.className = task.completed ? "completed" : (task.timeout ? "timedOut" : "");
 
-      listItem.appendChild(completeButton);
-      listItem.appendChild(deleteButton);
-      taskList.appendChild(listItem);
-    });
+    // Add buttons for marking as complete and deleting
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = function () {
+      deleteTask(index);
+    };
 
-    // Save tasks to local storage
-    saveTasks();
-  }
+    const completeButton = document.createElement("button");
+    completeButton.textContent = task.completed ? "Undo" : "Complete";
+    completeButton.onclick = function () {
+      toggleComplete(index);
+    };
+
+    listItem.appendChild(completeButton);
+    listItem.appendChild(deleteButton);
+    taskList.appendChild(listItem);
+  });
+
+  // Save tasks to local storage
+  saveTasks();
+}
 
   // Function to render history
   function renderHistory() {
@@ -73,6 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Save history to local storage
     saveHistory();
   }
+
+// Declare newTask outside the addTask function
+let newTask = null;
 
 // Function to add a new task
 window.addTask = function () {
@@ -96,7 +112,8 @@ window.addTask = function () {
       return;
     }
 
-    const newTask = {
+    // Assign a value to the existing newTask variable
+    newTask = {
       text: taskText,
       completed: false,
       dueDate: dueDate,
@@ -112,7 +129,7 @@ window.addTask = function () {
     // Schedule an alert when the time is up
     setTimeout(() => {
       alert(`Time is up for task: ${newTask.text}`);
-      markAsTimedOut(newTask);
+      markAsTimedOut(); // No need to pass newTask as it's declared in the outer scope
     }, timeRemaining);
 
     // Schedule an alert 1 minute before the due time
@@ -122,15 +139,18 @@ window.addTask = function () {
         alert(`One minute left for task: ${newTask.text}`);
       }, oneMinuteBefore);
     }
-
-    tasks.push(newTask);
-    renderTasks();
-    taskInput.value = "";
-    taskDate.value = "";
   } else {
     // Alert the user that a due date is required
     alert("Please enter a due date for the task.");
+    // Set newTask to null when there's no due date
+    newTask = null;
+    return;
   }
+  // Rest of your code...
+  tasks.push(newTask);
+  renderTasks();
+  taskInput.value = "";
+  taskDate.value = "";
 };
 
 // Function to show a notification
@@ -148,15 +168,19 @@ function showNotification(message, task) {
 }
 
 // Function to mark a task as timed out
-function markAsTimedOut(task) {
+function markAsTimedOut() {
+  if (!newTask) {
+    return; // Handle the case when newTask is null
+  }
+
   // Move the task to history with the status "Timed Out"
-  task.timeout = true;
-  task.status = "Timed Out";
-  history.push(task);
+  newTask.timeout = true;
+  newTask.status = "Timed Out";
+  history.push(newTask);
 
   // Apply animation for scoring out the task
   const taskListItems = document.querySelectorAll('#taskList li');
-  const taskIndex = tasks.findIndex((t) => t === task);
+  const taskIndex = tasks.findIndex((t) => t === newTask);
   if (taskIndex !== -1) {
     const taskListItem = taskListItems[taskIndex];
     taskListItem.classList.add('timedOut', 'scoreOutAnimation');
@@ -164,7 +188,7 @@ function markAsTimedOut(task) {
 
   // Remove the task from the current tasks after animation completes
   setTimeout(() => {
-    const taskIndex = tasks.findIndex((t) => t === task);
+    const taskIndex = tasks.findIndex((t) => t === newTask);
     if (taskIndex !== -1) {
       tasks.splice(taskIndex, 1);
       renderTasks();

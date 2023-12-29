@@ -210,10 +210,6 @@
       margin-top: 10px;
     }
 
-    button.historyBtn:hover {
-      background-color: #555;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -237,34 +233,47 @@
       color: #757575;
     }
 
+    button.clearHistoryBtn {
+      background-color: #474747;
+    }
+
     button.clearHistoryBtn:hover {
-      background-color: #acacac;
+      background-color: #202020;
       transform: scale(1.05);
     }
 
     .copyright {
       text-align: center;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  color: #fff;
-  padding: 0;
-  font-size: 12px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      color: #fff;
+      padding: 0;
+      font-size: 12px;
     }
 
-    /* Media Query for iPhone 11 and similar devices */
+    /* Media Query for mobile devices */
     @media only screen and (max-width: 414px) {
       .container {
-        width: 100%;
-        max-width: none;
-        margin: 10px;
-        display: flex;
-        flex-direction: column;
-      }
-      #historyContainer {
-        margin-top: 20px;
-      }
-    }
+    width: 100%;
+    max-width: none;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #historyContainer {
+    margin-top: 20px;
+  }
+
+  #taskContainer {
+    max-width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+}
   </style>
 </head>
 <body>
