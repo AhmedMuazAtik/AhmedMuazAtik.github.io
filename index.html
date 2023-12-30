@@ -13,7 +13,6 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      overflow: hidden;
       background: linear-gradient(45deg, #3498db, #2c3e50);
       animation: gradientAnimation 8s infinite alternate;
     }
@@ -253,8 +252,8 @@
     }
 
     /* Media Query for mobile devices */
-    @media only screen and (max-width: 414px) {
-      .container {
+@media only screen and (max-width: 414px) {
+  .container {
     width: 100%;
     max-width: none;
     margin: 10px;
@@ -266,14 +265,17 @@
     margin-top: 20px;
   }
 
-  #taskContainer {
-    max-width: 100%;
+  #taskContainer,
+  #historyContainer {
+    width: 100%;
+    max-width: none;
   }
 
   button {
     width: 100%;
   }
 }
+
   </style>
 </head>
 <body>
